@@ -127,3 +127,18 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Project dirs
+/data
+/outputs
+
+# IDEA Setting
+.idea/.gitignore
+.idea/inspectionProfiles/
+.idea/misc.xml
+.idea/modules.xml
+.idea/psoas_major_muscle_segmentation.iml
+.idea/vcs.xml
+
+# Mac
+.DS_Store

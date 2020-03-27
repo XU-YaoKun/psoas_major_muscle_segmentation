@@ -1,2 +1,1 @@
-# muscle_segmentation
-muscle segmentation, based on medical images
+# Psoas Major Muscle Segmentation
