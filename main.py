@@ -63,12 +63,15 @@ def evaluate(model, test_loader):
                 for k, v in data_batch.items()
             }
 
+        image = data_batch["image"].unsqueeze(dim=1)
+        label = data_batch["label"].unsqueeze(dim=1)
+
         with torch.no_grad():
-            mask_pred = model(data_batch["image"])
+            mask_pred = model(image)
 
         pred = torch.sigmoid(mask_pred)
         pred = (pred > 0.5).float()
-        dice += dice_coeff(pred, data_batch["label"])
+        dice += dice_coeff(pred, label)
 
     return dice / n_test
 
