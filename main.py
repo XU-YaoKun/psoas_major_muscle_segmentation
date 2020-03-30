@@ -36,8 +36,41 @@ def parse_args():
     return args
 
 
+def dice_coeff(input, target):
+    s = 0
+    eps = 1e-4
+
+    for c in zip(input, target):
+        inter = torch.dot(c[0].view(-1), c[1].view(-1))
+        union = torch.sum(c[0]) + torch.sum(c[1]) + eps
+
+        t = (2 * inter.float() + eps) / union.float()
+        s += t
+
+    return s / len(input)
+
+
 def evaluate(model, test_loader):
-    pass
+    model.eval()
+
+    dice = 0
+    n_test = len(test_loader)
+    tbar = tqdm(test_loader, ascii=True)
+    for data_batch in tbar:
+        if torch.cuda.is_available():
+            data_batch = {
+                k: v.cuda(non_blocking=True)
+                for k, v in data_batch.items()
+            }
+
+        with torch.no_grad():
+            mask_pred = model(data_batch["image"])
+
+        pred = torch.sigmoid(mask_pred)
+        pred = (pred > 0.5).float()
+        dice += dice_coeff(pred, data_batch["label"])
+
+    return dice / n_test
 
 
 def train(cfg):
@@ -62,6 +95,8 @@ def train(cfg):
 
     global_step = 0
     for epoch in range(cfg.TRAIN.EPOCH):
+        model.train()
+
         cur_epoch = epoch + 1
         global_step += 1
         epoch_loss = 0
@@ -97,7 +132,7 @@ def train(cfg):
             writer.add_scalar(
                 "Dice/test", test_score, global_step
             )
-        print("Training loss: {}".format(loss.item()))
+        print("Training loss: {}".format(epoch_loss))
 
     writer.close()
     print("TRAINING DONE.")
