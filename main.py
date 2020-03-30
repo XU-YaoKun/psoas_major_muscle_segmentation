@@ -54,6 +54,9 @@ def train(cfg):
         momentum=cfg.TRAIN.MOMENTUM,
     )
 
+    if torch.cuda.is_available():
+        model = model.cuda()
+
     log_dir = osp.join(cfg.OUTPUT_DIR, "log")
     writer = SummaryWriter(log_dir=log_dir)
 
@@ -73,10 +76,11 @@ def train(cfg):
                     for k, v in data_batch.items()
                 }
 
-            image = data_batch["image"]
-            label = data_batch["label"]
+            image = data_batch["image"].unsqueeze(dim=1)
+            label = data_batch["label"].unsqueeze(dim=1)
 
             logits = model(image)
+            print(logits.size())
             loss = criterion(logits, label)
             epoch_loss += loss.item()
 
