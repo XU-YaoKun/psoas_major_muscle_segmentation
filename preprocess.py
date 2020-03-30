@@ -17,6 +17,7 @@ def _dump(data_path, name):
 
     data = np.empty([512, 512, 0], dtype=np.float32)
     for file in file_list:
+        print("read {}...".format(osp.join(data_path, file)))
         imgs = _read(osp.join(data_path, file))
         data = np.concatenate([data, imgs], axis=2)
 

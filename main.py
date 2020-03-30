@@ -80,7 +80,6 @@ def train(cfg):
             label = data_batch["label"].unsqueeze(dim=1)
 
             logits = model(image)
-            print(logits.size())
             loss = criterion(logits, label)
             epoch_loss += loss.item()
 
@@ -91,14 +90,14 @@ def train(cfg):
             loss.backward()
             nn.utils.clip_grad_value_(model.parameters(), 0.1)
             optimizer.step()
-            print("Training loss: {}".format(loss.item()))
 
-            if global_step % cfg.TEST_STEP == 0:
-                test_score = evaluate(model, test_loader)
-                print("Test Dice Coeff: {}".format(test_score))
-                writer.add_scalar(
-                    "Dice/test", test_score, global_step
-                )
+        if global_step % cfg.TEST_STEP == 0:
+            test_score = evaluate(model, test_loader)
+            print("Test Dice Coeff: {}".format(test_score))
+            writer.add_scalar(
+                "Dice/test", test_score, global_step
+            )
+        print("Training loss: {}".format(loss.item()))
 
     writer.close()
     print("TRAINING DONE.")
