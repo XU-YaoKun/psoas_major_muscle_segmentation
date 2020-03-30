@@ -1,0 +1,5 @@
+DATA:
+  DATA_PATH: 'data'
+MODEL:
+  N_CHANNELS: 1
+  N_CLASS: 1

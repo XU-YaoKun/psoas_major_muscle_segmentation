@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-from modules import Up, Down, OutConv, DoubleConv
+from .modules import Up, Down, OutConv, DoubleConv
 
 
 class UNet(nn.Module):
@@ -36,10 +36,3 @@ class UNet(nn.Module):
 
         logits = self.out_conv(x)
         return logits
-
-
-if __name__ == "__main__":
-    net = UNet(1, 1)
-    input = torch.rand(1, 1, 512, 512)
-    output = net(input)
-    print(output.size())
