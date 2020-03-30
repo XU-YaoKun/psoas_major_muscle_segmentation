@@ -133,6 +133,7 @@ dmypy.json
 /outputs
 
 # IDEA Setting
+.idea
 .idea/.gitignore
 .idea/inspectionProfiles/
 .idea/misc.xml
