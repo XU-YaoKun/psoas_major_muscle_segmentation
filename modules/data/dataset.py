@@ -8,14 +8,14 @@ import numpy as np
 
 
 class BaseDataset(Dataset):
-    def __init__(self, data_path):
+    def __init__(self, data_path, mode):
         super(BaseDataset, self).__init__()
 
         self.image_data = self._load(
-            osp.join(data_path, 'imgs.pickle')
+            osp.join(data_path, mode+"_imgs.pickle")
         )
         self.label_data = self._load(
-            osp.join(data_path, 'labels.pickle')
+            osp.join(data_path, mode+"_labels.pickle")
         )
 
         self.image_size = self.image_data.shape[:2]
@@ -29,7 +29,7 @@ class BaseDataset(Dataset):
 
     @staticmethod
     def _load(file):
-        with open(file, 'rb') as f:
+        with open(file, "rb") as f:
             data = pickle.load(f)
         return data
 

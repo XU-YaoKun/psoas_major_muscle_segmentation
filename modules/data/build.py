@@ -4,11 +4,8 @@ from .dataset import BaseDataset
 
 
 def build_dataloader(cfg):
-    dataset = BaseDataset(cfg.DATA_PATH)
-    n_test = int(len(dataset) * cfg.TEST_PERCENT)
-    n_train = len(dataset) - n_test
-
-    trainset, testset = random_split(dataset, [n_train, n_test])
+    trainset = BaseDataset(cfg.DATA_PATH, mode="train")
+    testset = BaseDataset(cfg.DATA_PATH, mode="test")
 
     trainloader = DataLoader(
         trainset,

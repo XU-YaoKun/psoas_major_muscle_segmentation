@@ -21,17 +21,25 @@ def _dump(data_path, name):
         imgs = _read(osp.join(data_path, file))
         data = np.concatenate([data, imgs], axis=2)
 
-    dump_path = osp.join('data', name)
-    with open(dump_path, 'wb') as f:
+    dump_path = osp.join("data", name)
+    with open(dump_path, "wb") as f:
         pickle.dump(data, f)
 
     print("Dump {} to {}".format(data_path, dump_path))
     return
 
 
+def _dump_dataset(mode):
+    _dump(osp.join("data", mode, "imgs"), mode + "_imgs.pickle")
+    _dump(
+        osp.join("data", mode, "lables"),
+        mode + "_labels.pickle",
+    )
+
+
 def main():
-    _dump(osp.join('data', 'imgs'), 'imgs.pickle')
-    _dump(osp.join('data', 'labels'), 'labels.pickle')
+    _dump_dataset("train")
+    _dump_dataset("test")
 
 
 if __name__ == "__main__":
