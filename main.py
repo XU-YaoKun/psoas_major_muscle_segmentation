@@ -63,12 +63,15 @@ def evaluate(model, test_loader):
                 for k, v in data_batch.items()
             }
 
+        image = data_batch["image"].unsqueeze(dim=1)
+        label = data_batch["label"].unsqueeze(dim=1)
+
         with torch.no_grad():
-            mask_pred = model(data_batch["image"])
+            mask_pred = model(image)
 
         pred = torch.sigmoid(mask_pred)
         pred = (pred > 0.5).float()
-        dice += dice_coeff(pred, data_batch["label"])
+        dice += dice_coeff(pred, label)
 
     return dice / n_test
 
@@ -125,6 +128,7 @@ def train(cfg):
             loss.backward()
             nn.utils.clip_grad_value_(model.parameters(), 0.1)
             optimizer.step()
+        print("Training loss: {}".format(epoch_loss))
 
         if global_step % cfg.TEST_STEP == 0:
             test_score = evaluate(model, test_loader)
@@ -132,7 +136,6 @@ def train(cfg):
             writer.add_scalar(
                 "Dice/test", test_score, global_step
             )
-        print("Training loss: {}".format(epoch_loss))
 
     writer.close()
     print("TRAINING DONE.")
