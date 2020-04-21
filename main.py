@@ -92,6 +92,11 @@ def train(cfg):
         weight_decay=cfg.TRAIN.WEIGHT_DECAY,
         momentum=cfg.TRAIN.MOMENTUM,
     )
+    scheduler = optim.lr_scheduler.ReduceLROnPlateau(
+        optimizer=optimizer,
+        mode='max',
+        patience=2
+    )
 
     if torch.cuda.is_available():
         model = model.cuda()
@@ -137,8 +142,9 @@ def train(cfg):
 
         if global_step % cfg.TEST_STEP == 0:
             test_score = evaluate(model, test_loader)
+            scheduler.step(test_score)
             test_table = PrettyTable(["Dice"])
-            test_table.add_row([test_score])
+            test_table.add_row([test_score.item()])
             print(test_table)
             writer.add_scalar(
                 "Dice/test", test_score, global_step
