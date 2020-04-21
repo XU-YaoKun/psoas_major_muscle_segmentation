@@ -10,6 +10,7 @@ from tqdm import tqdm
 from prettytable import PrettyTable
 
 from modules.model.unet import UNet
+from modules.model.fcn import FCN
 from modules.data import build_dataloader
 from modules.config import cfg
 
@@ -93,9 +94,7 @@ def train(cfg):
         momentum=cfg.TRAIN.MOMENTUM,
     )
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(
-        optimizer=optimizer,
-        mode='max',
-        patience=2
+        optimizer=optimizer, mode="max", patience=2
     )
 
     if torch.cuda.is_available():

@@ -12,19 +12,19 @@ class BaseDataset(Dataset):
         super(BaseDataset, self).__init__()
 
         self.image_data = self._load(
-            osp.join(data_path, mode+"_imgs.pickle")
+            osp.join(data_path, mode + "_imgs.pickle")
         )
         self.label_data = self._load(
-            osp.join(data_path, mode+"_labels.pickle")
+            osp.join(data_path, mode + "_labels.pickle")
         )
 
         self.image_size = self.image_data.shape[:2]
         self.len = self.image_data.shape[2]
 
-        print("-"*25, mode, '-'*25)
+        print("-" * 25, mode, "-" * 25)
         print("Image shape: {}".format(self.image_size))
         print("Total images: {}".format(self.len))
-        print('-'*50)
+        print("-" * 50)
 
     def __len__(self):
         return self.len
