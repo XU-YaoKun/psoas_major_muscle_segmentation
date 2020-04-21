@@ -2,11 +2,13 @@ import argparse
 import os
 import os.path as osp
 
-from tqdm import tqdm
 import torch
 import torch.optim as optim
 import torch.nn as nn
 from torch.utils.tensorboard import SummaryWriter
+from tqdm import tqdm
+from prettytable import PrettyTable
+from time import gmtime, strftime
 
 from modules.model.unet import UNet
 from modules.data import build_dataloader
@@ -42,9 +44,9 @@ def dice_coeff(input, target):
 
     for c in zip(input, target):
         inter = torch.dot(c[0].view(-1), c[1].view(-1))
-        union = torch.sum(c[0]) + torch.sum(c[1]) + eps
+        union = torch.sum(c[0]) + torch.sum(c[1])
 
-        t = (2 * inter.float() + eps) / union.float()
+        t = (2 * inter.float() + eps) / (union.float() + eps)
         s += t
 
     return s / len(input)
@@ -57,6 +59,8 @@ def evaluate(model, test_loader):
     n_test = len(test_loader)
     tbar = tqdm(test_loader, ascii=True)
     for data_batch in tbar:
+        tbar.set_description("Evaluate")
+
         if torch.cuda.is_available():
             data_batch = {
                 k: v.cuda(non_blocking=True)
@@ -81,7 +85,7 @@ def train(cfg):
     criterion = nn.BCEWithLogitsLoss()
     model = UNet(
         n_channels=cfg.MODEL.N_CHANNELS,
-        n_class=cfg.MODEL.N_CLASS
+        n_class=cfg.MODEL.N_CLASS,
     )
     optimizer = optim.RMSprop(
         model.parameters(),
@@ -93,7 +97,8 @@ def train(cfg):
     if torch.cuda.is_available():
         model = model.cuda()
 
-    log_dir = osp.join(cfg.OUTPUT_DIR, "log")
+    t = "record_{}".format(strftime("%Y-%m-%d_%H-%M-%S", gmtime()))
+    log_dir = osp.join(cfg.OUTPUT_DIR, "log", t)
     writer = SummaryWriter(log_dir=log_dir)
 
     global_step = 0
@@ -128,11 +133,16 @@ def train(cfg):
             loss.backward()
             nn.utils.clip_grad_value_(model.parameters(), 0.1)
             optimizer.step()
-        print("Training loss: {}".format(epoch_loss))
+
+        loss_table = PrettyTable(["Training Loss"])
+        loss_table.add_row([epoch_loss])
+        print(loss_table)
 
         if global_step % cfg.TEST_STEP == 0:
             test_score = evaluate(model, test_loader)
-            print("Test Dice Coeff: {}".format(test_score))
+            test_table = PrettyTable(["Dice"])
+            test_table.add_row([test_score])
+            print(test_table)
             writer.add_scalar(
                 "Dice/test", test_score, global_step
             )
