@@ -16,6 +16,12 @@ from modules.data import build_dataloader
 from modules.config import cfg
 
 
+_SEG_NET = {
+    "UNET": UNet,
+    "FCN": FCN
+}
+
+
 def parse_args():
     parser = argparse.ArgumentParser(
         description="pasoas major muscle segmentations"
@@ -84,7 +90,7 @@ def evaluate(model, test_loader):
 def train(cfg):
     train_loader, test_loader = build_dataloader(cfg.DATA)
     criterion = nn.BCEWithLogitsLoss()
-    model = UNet(
+    model = _SEG_NET[cfg.MODEL.TYPE](
         n_channels=cfg.MODEL.N_CHANNELS,
         n_class=cfg.MODEL.N_CLASS,
     )

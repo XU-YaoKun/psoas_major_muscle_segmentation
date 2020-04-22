@@ -7,6 +7,7 @@ cfg = _C
 
 # Model
 _C.MODEL = CN()
+_C.MODEL.TYPE = "FCN"
 _C.MODEL.N_CHANNELS = 1
 _C.MODEL.N_CLASS = 1
 
