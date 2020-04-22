@@ -16,10 +16,7 @@ from modules.data import build_dataloader
 from modules.config import cfg
 
 
-_SEG_NET = {
-    "UNET": UNet,
-    "FCN": FCN
-}
+_SEG_NET = {"UNET": UNet, "FCN": FCN}
 
 
 def parse_args():
@@ -107,8 +104,10 @@ def train(cfg):
     if torch.cuda.is_available():
         model = model.cuda()
 
-    t = "record_{}".format(strftime("%Y-%m-%d_%H-%M-%S", gmtime()))
-    log_dir = osp.join(cfg.OUTPUT_DIR, "log", t)
+    t = "record_{}".format(
+        strftime("%Y-%m-%d_%H-%M-%S", gmtime())
+    )
+    log_dir = osp.join(cfg.OUTPUT_DIR, "log", cfg.MODEL.TYPE, t)
     writer = SummaryWriter(log_dir=log_dir)
 
     global_step = 0
@@ -145,9 +144,7 @@ def train(cfg):
         loss_table.add_row([epoch_loss])
         print(loss_table)
 
-        writer.add_scalar(
-            "Loss/train", epoch_loss, global_step
-        )
+        writer.add_scalar("Loss/train", epoch_loss, global_step)
 
         if global_step % cfg.TEST_STEP == 0:
             test_score = evaluate(model, test_loader)
