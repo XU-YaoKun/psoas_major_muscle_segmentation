@@ -131,9 +131,6 @@ def train(cfg):
             loss = criterion(logits, label)
             epoch_loss += loss.item()
 
-            writer.add_scalar(
-                "Loss/train", loss.item(), global_step
-            )
             optimizer.zero_grad()
             loss.backward()
             nn.utils.clip_grad_value_(model.parameters(), 0.1)
@@ -142,6 +139,10 @@ def train(cfg):
         loss_table = PrettyTable(["Training Loss"])
         loss_table.add_row([epoch_loss])
         print(loss_table)
+
+        writer.add_scalar(
+            "Loss/train", epoch_loss, global_step
+        )
 
         if global_step % cfg.TEST_STEP == 0:
             test_score = evaluate(model, test_loader)

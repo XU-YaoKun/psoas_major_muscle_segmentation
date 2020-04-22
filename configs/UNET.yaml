@@ -1,5 +1,8 @@
 DATA:
   DATA_PATH: 'data'
+TRAIN:
+  LR: 1e-4
+  EPOCH: 200
 MODEL:
   N_CHANNELS: 1
   N_CLASS: 1

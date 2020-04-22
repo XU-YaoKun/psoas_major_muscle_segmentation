@@ -24,7 +24,7 @@ class BaseDataset(Dataset):
         print("-"*25, mode, '-'*25)
         print("Image shape: {}".format(self.image_size))
         print("Total images: {}".format(self.len))
-        print('-'*50)
+        print('-'*58)
 
     def __len__(self):
         return self.len
