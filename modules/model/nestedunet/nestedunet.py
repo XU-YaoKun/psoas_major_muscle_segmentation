@@ -29,7 +29,7 @@ class ConvBlockNested(nn.Module):
 
 # Nested Unet
 class NestedUNet(nn.Module):
-    def __init__(self, in_ch=3, out_ch=1):
+    def __init__(self, n_channels, n_class):
         super(NestedUNet, self).__init__()
 
         n1 = 64
@@ -41,7 +41,7 @@ class NestedUNet(nn.Module):
         )
 
         self.conv0_0 = ConvBlockNested(
-            in_ch, filters[0], filters[0]
+            n_channels, filters[0], filters[0]
         )
         self.conv1_0 = ConvBlockNested(
             filters[0], filters[1], filters[1]
@@ -91,7 +91,7 @@ class NestedUNet(nn.Module):
         )
 
         self.final = nn.Conv2d(
-            filters[0], out_ch, kernel_size=1
+            filters[0], n_class, kernel_size=1
         )
 
     def forward(self, x):

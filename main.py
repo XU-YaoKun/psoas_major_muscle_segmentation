@@ -9,14 +9,16 @@ from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 from prettytable import PrettyTable
 from time import gmtime, strftime
+import numpy as np
 
 from modules.model.unet import UNet
 from modules.model.fcn import FCN
+from modules.model.nestedunet import NestedUNet
 from modules.data import build_dataloader
 from modules.config import cfg
 
 
-_SEG_NET = {"UNET": UNet, "FCN": FCN}
+_SEG_NET = {"UNET": UNet, "FCN": FCN, "NESTED_UNET": NestedUNet}
 
 
 def parse_args():
@@ -91,11 +93,10 @@ def train(cfg):
         n_channels=cfg.MODEL.N_CHANNELS,
         n_class=cfg.MODEL.N_CLASS,
     )
-    optimizer = optim.RMSprop(
+    optimizer = optim.Adam(
         model.parameters(),
         lr=cfg.TRAIN.LR,
         weight_decay=cfg.TRAIN.WEIGHT_DECAY,
-        momentum=cfg.TRAIN.MOMENTUM,
     )
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(
         optimizer=optimizer, mode="max", patience=2
@@ -137,7 +138,7 @@ def train(cfg):
 
             optimizer.zero_grad()
             loss.backward()
-            nn.utils.clip_grad_value_(model.parameters(), 0.1)
+            # nn.utils.clip_grad_value_(model.parameters(), 0.1)
             optimizer.step()
 
         loss_table = PrettyTable(["Training Loss"])

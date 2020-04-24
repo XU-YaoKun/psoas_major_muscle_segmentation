@@ -1,0 +1,10 @@
+DATA:
+  BATCH_SIZE: 1
+  DATA_PATH: 'data'
+TRAIN:
+  LR: 1e-3
+  EPOCH: 100
+MODEL:
+  TYPE: FCN
+  N_CLASS: 1
+TEST_STEP: 1
