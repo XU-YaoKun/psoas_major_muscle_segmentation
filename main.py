@@ -158,6 +158,7 @@ def train(cfg):
             )
 
     writer.close()
+    print("Result saved in {}...".format(log_dir))
     print("TRAINING DONE.")
 
 

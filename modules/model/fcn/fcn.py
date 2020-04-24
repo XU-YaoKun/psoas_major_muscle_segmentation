@@ -55,14 +55,14 @@ class FCN(nn.Module):
         self.drop7 = nn.Dropout2d()
 
         self.score_fr = nn.Conv2d(1024, n_class, 1)
-        self.score_pool3 = nn.Conv2d(256, n_class, 1)
-        self.score_pool4 = nn.Conv2d(512, n_class, 1)
+        self.score_pool3 = nn.Conv2d(128, n_class, 1)
+        self.score_pool4 = nn.Conv2d(256, n_class, 1)
 
         self.upscore2 = nn.ConvTranspose2d(
             n_class, n_class, 2, stride=2, bias=False
         )
-        self.upscore8 = nn.ConvTranspose2d(
-            n_class, n_class, 8, stride=8, bias=False
+        self.upscore4 = nn.ConvTranspose2d(
+            n_class, n_class, 4, stride=4, bias=False
         )
         self.upscore_pool4 = nn.ConvTranspose2d(
             n_class, n_class, 2, stride=2, bias=False
@@ -80,12 +80,13 @@ class FCN(nn.Module):
     def forward(self, x):
         h = x
         h = self.conv1_1(h)
-        h = self.conv2_1(h)
+        h = self.conv1_2(h)
         h = self.pool1(h)
 
         h = self.conv2_1(h)
         h = self.conv2_2(h)
         h = self.pool2(h)
+        pool2 = h
 
         h = self.conv3_1(h)
         h = self.conv3_2(h)
@@ -93,11 +94,10 @@ class FCN(nn.Module):
         h = self.pool3(h)
         pool3 = h  # 1/8
 
-        h = self.con4_1(h)
-        h = self.con4_2(h)
-        h = self.con4_3(h)
+        h = self.conv4_1(h)
+        h = self.conv4_2(h)
+        h = self.conv4_3(h)
         h = self.pool4(h)
-        pool4 = h  # 1/16
 
         h = self.relu6(self.fc6(h))
         h = self.drop6(h)
@@ -108,19 +108,19 @@ class FCN(nn.Module):
         h = self.score_fr(h)
 
         h = self.upscore2(h)
-        upscore2 = h  # 1/16
+        upscore2 = h  # 1/8
 
-        h = self.score_pool4(pool4)
-        score_pool4c = h  # 1/16
-        h = upscore2 + score_pool4c  # 1/16
+        h = self.score_pool4(pool3)
+        score_pool4c = h  # 1/8
+        h = upscore2 + score_pool4c  # 1/8
 
         h = self.upscore_pool4(h)
-        upscore_pool4 = h  # 1/8
+        upscore_pool4 = h  # 1/4
 
-        h = self.score_pool3(pool3)
-        score_pool3c = h  # 1/8
-        h = upscore_pool4 + score_pool3c  # 1/8
+        h = self.score_pool3(pool2)
+        score_pool3c = h  # 1/4
+        h = upscore_pool4 + score_pool3c  # 1/4
 
-        h = self.upscore8(h)
+        h = self.upscore4(h)
 
         return h
