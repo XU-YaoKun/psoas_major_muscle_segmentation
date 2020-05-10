@@ -6,7 +6,9 @@ class ConvBlock(nn.Module):
     def __init__(self, in_channel, out_channel):
         super(ConvBlock, self).__init__()
 
-        self.conv = nn.Conv2d(in_channel, out_channel, 3, padding=1)
+        self.conv = nn.Conv2d(
+            in_channel, out_channel, 3, padding=1
+        )
         self.bn = nn.BatchNorm2d(out_channel)
         self.relu = nn.ReLU(inplace=True)
 
@@ -43,7 +45,7 @@ class FCN(nn.Module):
         self.conv4_2 = ConvBlock(512, 512)
         self.conv4_3 = ConvBlock(512, 512)
         self.pool4 = nn.MaxPool2d(2, stride=2, ceil_mode=True)
- 
+
         # fcn6
         self.fc6 = nn.Conv2d(512, 1024, 1)
         self.relu6 = nn.ReLU(inplace=True)
