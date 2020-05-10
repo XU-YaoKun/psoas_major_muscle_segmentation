@@ -10,11 +10,11 @@ In this repo, FCN, UNet and UNet++ is implemented to tackle semantic segmentatio
 
 The framework of FCN and UNet++ is illustrated as below.
 
-|![FCN](doc/FCN.png)|
+|![FCN](doc/fcn.png)|
 |:--:|
 |*FCN Framework*|
 
-|![UNet++](doc/UNET++.png)|
+|![UNet++](doc/unet++.png)|
 |:--:|
 |UNet++ Framework|
 
@@ -67,7 +67,9 @@ tensorboard --logdir logging_file_path
 
 ### 5. Reference
 [1] Shelhamer, Evan et al. “Fully Convolutional Networks for Semantic Segmentation.” IEEE Transactions on Pattern Analysis and Machine Intelligence 39 (2017): 640-651.
+
 [2] Ronneberger, Olaf et al. “U-Net: Convolutional Networks for Biomedical Image Segmentation.” ArXiv abs/1505.04597 (2015): n. pag.
+
 [3] Zhou, Zongwei, et al. "Unet++: A nested u-net architecture for medical image segmentation." Deep Learning in Medical Image Analysis and Multimodal Learning for Clinical Decision Support. Springer, Cham, 2018. 3-11.
 
 
